@@ -1,18 +1,18 @@
 import folium
 import pandas as pd
+import numpy as np
 import requests
 import streamlit as st
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import Nominatim
 from streamlit_folium import folium_static
+import random
 
 ''' 
 #  Welcome :pray:
 '''
 st.header('You can get a business idea by entering some details!')
 main_place = st.text_input( 'Enter the name of the place where you would like to setup a business','Gachibowli')
-
-
 
 
 df = pd.DataFrame({'Place': main_place},index=[0])
@@ -78,10 +78,10 @@ map_1 = folium.Map(location=[a,b], zoom_start=13)
 for lat, lng in zip(venues_df['VenueLatitude'],venues_df['VenueLongitude']):
     folium.CircleMarker(
         [lat, lng],
-        radius=8,
-        color='blue',
+        radius=5,
+        color='#006080',
         fill=True,
-        fill_color='#f77300',
+        fill_color='#80dfff',
         fill_opacity=0.7).add_to(map_1) 
 
 
@@ -158,11 +158,11 @@ map_2 = folium.Map(location=[c,d], zoom_start=13)
 for lat, lng in zip(venues2_df['VenueLatitude'],venues2_df['VenueLongitude']):
     folium.CircleMarker(
         [lat, lng],
-        radius=8,
-        color='blue',
+        radius=5,
+        color='#006080',
         fill=True,
-        fill_color='#f77300',
-        fill_opacity=0.7).add_to(map_2)  
+        fill_color='#80dfff',
+        fill_opacity=0.99).add_to(map_2)  
     
 
 
@@ -236,9 +236,9 @@ for lat, lng in zip(venues3_df['VenueLatitude'],venues3_df['VenueLongitude']):
     folium.CircleMarker(
         [lat, lng],
         radius=8,
-        color='blue',
+        color='#006080',
         fill=True,
-        fill_color='#f77300',
+        fill_color='#80dfff',
         fill_opacity=0.7).add_to(map_3)  
 
 
@@ -288,42 +288,69 @@ for i in range(0,1):
    ).add_to(maps_3)
 
 
-place_map = st.selectbox("",(main_place,sur1,sur2))
+# place_map = st.selectbox("",(main_place,sur1,sur2))
 
-if place_map == main_place:
-    folium_static(maps_1)
-elif place_map == sur1:
-    folium_static(maps_2)
-else:
-    folium_static(maps_3)
+# if place_map == main_place:
+#     folium_static(maps_1)
+# elif place_map == sur1:
+#     folium_static(maps_2)
+# else:
+#     folium_static(maps_3)
 
-cluster_map = st.radio(
-    "Select an area",
-    (main_place,sur1,sur2))
+# cluster_map = st.radio(
+#     "Select an area",
+#     (main_place,sur1,sur2))
 
-if cluster_map == main_place:
-    st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",main_place,"</h3>", unsafe_allow_html=True)
-    folium_static(map_1)
-elif cluster_map == sur1:
-    st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",sur1,"</h3>", unsafe_allow_html=True)
-    folium_static(map_2)
-else:
-    st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",sur2,"</h3>", unsafe_allow_html=True)
-    folium_static(map_3)
+# if cluster_map == main_place:
+#     st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",main_place,"</h3>", unsafe_allow_html=True)
+#     folium_static(map_1)
+
+# elif cluster_map == sur1:
+#     st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",sur1,"</h3>", unsafe_allow_html=True)
+#     folium_static(map_2)
+# else:
+#     st.write("<h3 style= 'text-align: center;color: #F63366;font-family:courier;font-weight: bold;'>Cluster of Businesses located in ",sur2,"</h3>", unsafe_allow_html=True)
+#     folium_static(map_3)
+
+venues_df.index = np.arange(1,len(venues_df)+1)
+venues2_df.index = np.arange(1,len(venues2_df)+1)
+venues3_df.index = np.arange(1,len(venues3_df)+1)
     
-option = st.selectbox("Which place's venues would you like to see",( main_place,sur1,sur2))
+# option = st.selectbox("Which place's venues would you like to see?",( main_place,sur1,sur2))
 
 
-if option == main_place:
-    st.dataframe(venues_df)
-elif option == sur1:
-    st.dataframe(venues2_df)
-else:
-    st.dataframe(venues3_df)
+# if option == main_place:
+#     st.dataframe(venues_df)
+# elif option == sur1:
+#     st.dataframe(venues2_df)
+# else:
+#     st.dataframe(venues3_df)
 
-venues_category = venues_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
-venues2_category = venues2_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
-venues3_category = venues3_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
+# venues_category = pd.DataFrame(columns = ['Categories', 'Count'] )
+# venues2_category = pd.DataFrame(columns = ['Categories', 'Count'] )
+# venues3_category = pd.DataFrame(columns = ['Categories', 'Count'] )
+
+
+v_cat=venues_df.groupby(['VenueCategory'])['VenueCategory'].count().sort_values(ascending=False)
+v_cate = pd.DataFrame(dict(Categories=v_cat.index, Aggregate=v_cat.values))
+v_cate.index = np.arange(1,len(v_cate)+1)
+
+
+v2_cat=venues2_df.groupby(['VenueCategory'])['VenueCategory'].count().sort_values(ascending=False)
+v2_cate = pd.DataFrame(dict(Categories=v2_cat.index, Aggregate=v2_cat.values))
+v2_cate.index = np.arange(1,len(v2_cate)+1)
+
+
+v3_cat=venues3_df.groupby(['VenueCategory'])['VenueCategory'].count().sort_values(ascending=False)
+v3_cate = pd.DataFrame(dict(Categories=v3_cat.index, Aggregate=v3_cat.values))
+v2_cate.index = np.arange(1,len(v2_cate)+1)
+
+
+
+
+# venues_category = venues_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
+# venues2_category = venues2_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
+# venues3_category = venues3_df.groupby(['VenueCategory']).size().sort_values(ascending=False)
 
 # option = st.selectbox("Venues grouped by categories",('#', main_place,sur1,sur2))
 
@@ -336,16 +363,94 @@ venues3_category = venues3_df.groupby(['VenueCategory']).size().sort_values(asce
 # else:
 #     st.dataframe(venues3_category)
 
-col1, col2, col3 = st.beta_columns(3)
+# col1, col2, col3 = st.beta_columns(3)
 
-with col1:
-    st.write("List of Venues at "+main_place)
-    st.dataframe(venues_category)
+# with col1:
+#     st.write("List of Venues at "+main_place)
+#     st.dataframe(v_cate)
 
-with col2:
-    st.write("List of Venues at "+sur1)
-    st.dataframe(venues2_category)
+# with col2:
+#     st.write("List of Venues at "+sur1)
+#     st.dataframe(v2_cate)
 
-with col3:
-    st.write("List of Venues at "+sur2)
-    st.dataframe(venues3_category)
+# with col3:
+#     st.write("List of Venues at "+sur2)
+#     st.dataframe(v3_cate)
+
+
+
+two_three_merge = v2_cate.merge(v3_cate,how='outer',sort='False')
+
+
+
+two_three_draft = pd.DataFrame(columns=['Categories'])
+two_three_draft= two_three_merge[['Categories']].drop_duplicates(keep=False)
+two_three = two_three_draft[['Categories']].reset_index(drop=True)
+two_three.index = np.arange(1,len(two_three)+1)
+# st.dataframe(two_three)
+
+
+just_1 = pd.DataFrame(columns=['Categories'])
+just_1 = v_cate[['Categories']]
+just_one = just_1.sort_values('Categories',ascending= True)
+just_one.index = np.arange(1,len(just_one)+1)
+# st.dataframe(just_one)
+
+sub =pd.concat([two_three, just_one, just_one]).drop_duplicates(keep=False)
+sub.index = np.arange(1,len(sub)+1)
+
+final_list = sub['Categories'].tolist()
+
+rand = random.randint(2,3)
+UpdatedList = random.sample(final_list, 2)
+
+
+# st.write("<h2 style= 'text-align: center;color: #F63366;font-family: 'Titillium Bold';font-weight: bold;'>Bizidea suggests you the following ideas!</h2>", unsafe_allow_html=True)
+# st.write("<h3 style= 'text-align: center;font-family: 'Andale Mono';font-weight: bold;'>",UpdatedList[0],"</h3>", unsafe_allow_html=True)
+# st.write("<h3 style= 'text-align: center;font-family: 'Andale Mono';font-weight: bold;'>",UpdatedList[1],"</h3>", unsafe_allow_html=True)
+
+
+side_box = st.sidebar.selectbox("Which of the following would you like to look at?",("Bizidea","Cluster of Businesses","Area Location", "Venues at a location", "List of Venues"))
+
+if side_box == "Area Location":
+    place_map = st.selectbox("",(main_place,sur1,sur2))
+    if place_map == main_place:
+        folium_static(maps_1)
+    elif place_map == sur1:
+        folium_static(maps_2)
+    else:
+        folium_static(maps_3)
+elif side_box == "Venues at a location":
+    option = st.selectbox("Which place's venues would you like to see?",( main_place,sur1,sur2))
+    if option == main_place:
+        st.dataframe(venues_df)
+    elif option == sur1:
+        st.dataframe(venues2_df)
+    else:
+        st.dataframe(venues3_df)
+elif side_box == "List of Venues":
+    col1, col2, col3 = st.beta_columns(3)
+    with col1:
+        st.write("List of Venues at "+main_place)
+        st.dataframe(v_cate)
+    with col2:
+        st.write("List of Venues at "+sur1)
+        st.dataframe(v2_cate)
+    with col3:
+        st.write("List of Venues at "+sur2)
+        st.dataframe(v3_cate)
+elif side_box == "Cluster of Businesses":
+    cluster_map = st.radio("Select an area",(main_place,sur1,sur2))
+    if cluster_map == main_place:
+        st.write("<h3 style= 'text-align: center;color: #4DA8DA;font-family: 'Terminal Dosis';font-weight: bold;'>Cluster of Businesses found in ",main_place,"</h3>", unsafe_allow_html=True)
+        folium_static(map_1)
+    elif cluster_map == sur1:
+        st.write("<h3 style= 'text-align: center;color: #4DA8DA;font-family: 'Terminal Dosis';font-weight: bold;'>Cluster of Businesses found in ",sur1,"</h3>", unsafe_allow_html=True)
+        folium_static(map_2)
+    else:
+        st.write("<h3 style= 'text-align: center;color: #4DA8DA;font-family: 'Terminal Dosis';font-weight: bold;'>Cluster of Businesses found in ",sur2,"</h3>", unsafe_allow_html=True)
+        folium_static(map_3)
+elif side_box == "Bizidea":
+    st.write("<h2 style= 'text-align: center;color: #F63366;font-family: 'Titillium Bold';font-weight: bold;'>Bizidea suggests you the following ideas!</h2>", unsafe_allow_html=True)
+    st.write("<h3 style= 'text-align: center;font-family: 'Andale Mono';font-weight: bold;'>",UpdatedList[0],"</h3>", unsafe_allow_html=True)
+    st.write("<h3 style= 'text-align: center;font-family: 'Andale Mono';font-weight: bold;'>",UpdatedList[1],"</h3>", unsafe_allow_html=True)
